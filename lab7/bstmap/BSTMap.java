@@ -1,6 +1,7 @@
 package bstmap;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     private class Node {
         public Node l;
         public Node r;
+        public Node parent;
         public K key;
         public V value;
 
@@ -39,7 +41,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     }
 
     public void printInOrder() {
-        
+
     }
 
 
@@ -129,16 +131,80 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     /* Returns a Set view of the keys contained in this map. Not required for Lab 7.
      * If you don't implement this, throw an UnsupportedOperationException. */
     public Set<K> keySet(){
-        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
-        throw UnsupportedOperationException;
+//        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
+//        throw UnsupportedOperationException;
+        Set<K> set = new HashSet<K>();
+        process_keySet(set, root);
+        return set;
+    }
+
+    private void process_keySet(Set<K> set, Node cur){
+        if(cur == null){
+            return ;
+        }
+        set.add(cur.key);
+        process_keySet(set, cur.l);
+        process_keySet(set, cur.r);
     }
 
     /* Removes the mapping for the specified key from this map if present.
      * Not required for Lab 7. If you don't implement this, throw an
      * UnsupportedOperationException. */
     public V remove(K key){
-        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
-        throw UnsupportedOperationException;
+//        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
+//        throw UnsupportedOperationException;
+        Node cur = root;
+        Node pre = null;
+        while(cur != null) {
+            if(cur.key.equals(key)){
+                V value = cur.value;
+                process_remove(cur, pre);
+                return value;
+            }
+            pre = cur;
+            if(cur.key.compareTo(key) < 0){
+                cur = cur.l;
+            }
+            else {
+                cur = cur.r;
+            }
+        }
+        return null;
+    }
+
+    private void process_remove(Node cur, Node pre) {
+        if(cur.l == null && cur.r == null){
+            if(pre.l == cur){
+                pre.l = null;
+            }
+            else{
+                pre.r = null;
+            }
+        }
+        else if(cur.l == null || cur.r == null){
+            Node next = (cur.l == null) ? cur.r : cur.l;
+            if(pre.l == cur){
+                pre.l = next;
+            }
+            else{
+                pre.r = next;
+            }
+        }
+        else {
+            cur = cur.l;
+            Node preCur = null;
+            while(cur.r != null){
+                preCur = cur;
+                cur = cur.r;
+            }
+            preCur.r = null;
+            if(pre.l == cur){
+                pre.l = cur;
+            }
+            else{
+                pre.r = cur;
+            }
+        }
     }
 
 
@@ -146,8 +212,24 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
      * the specified value. Not required for Lab 7. If you don't implement this,
      * throw an UnsupportedOperationException.*/
     public V remove(K key, V value){
-        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
-        throw UnsupportedOperationException;
+//        UnsupportedOperationException UnsupportedOperationException = new UnsupportedOperationException();
+//        throw UnsupportedOperationException;
+        Node cur = root;
+        Node pre = null;
+        while(cur != null) {
+            if(cur.key.equals(key) && cur.value.equals(value)){
+                process_remove(cur, pre);
+                return value;
+            }
+            pre = cur;
+            if(cur.key.compareTo(key) < 0){
+                cur = cur.l;
+            }
+            else {
+                cur = cur.r;
+            }
+        }
+        return null;
     }
 
     public Iterator<K> iterator(){
