@@ -173,6 +173,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     }
 
     private void process_remove(Node cur, Node pre) {
+        if(pre == null){
+            pre = new Node(null, null);
+        }
         if(cur.l == null && cur.r == null){
             if(pre.l == cur){
                 pre.l = null;
